@@ -1,4 +1,4 @@
-name: Triển khai FE (Nginx) & BE (JSON Server) lên Prod
+name: Thử nghiệm Đóng gói (CI Build)
 
 on:
   push:
@@ -6,39 +6,28 @@ on:
       - main
 
 jobs:
-  deploy_docker_compose:
-    name: Cập nhật và Khởi động dịch vụ
+  build_va_dong_goi:
+    name: Kiểm tra và Đóng gói mã nguồn
     runs-on: ubuntu-latest
-    environment: production
     
     steps:
       - name: 1. Tải mã nguồn mới nhất
         uses: actions/checkout@v4
 
-      - name: 2. Copy toàn bộ dự án lên máy chủ (qua SCP)
-        uses: appleboy/scp-action@v0.1.7
+      - name: 2. Kiểm tra cấu trúc thư mục
+        run: |
+          echo "Danh sách các file trong dự án hiện tại:"
+          ls -la
+
+      - name: 3. Thử nghiệm Build Docker Compose
+        run: |
+          echo "Tiến hành build thử các container để quét lỗi..."
+          docker-compose build
+          echo "Build thành công! Cấu hình FE và BE hoàn toàn hợp lệ."
+
+      - name: 4. Lưu trữ thành phẩm (Artifact)
+        uses: actions/upload-artifact@v4
         with:
-          host: ${{ secrets.PROD_SERVER_IP }}
-          username: ${{ secrets.PROD_SERVER_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          source: "."
-          target: "/opt/landing-page-app"
-          
-      - name: 3. Ra lệnh Docker Compose build và chạy lại (qua SSH)
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PROD_SERVER_IP }}
-          username: ${{ secrets.PROD_SERVER_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          script: |
-            echo "Truy cập vào thư mục dự án..."
-            cd /opt/landing-page-app
-            
-            echo "Tắt các container cũ đang chạy..."
-            docker-compose down
-            
-            echo "Tiến hành build lại image mới và khởi động..."
-            docker-compose up -d --build
-            
-            echo "Kiểm tra danh sách container đang hoạt động:"
-            docker ps
+          name: fullstack-package
+          path: ./*
+          retention-days: 7
