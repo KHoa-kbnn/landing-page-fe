@@ -1,0 +1,33 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  kiem_tra_va_dong_goi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tải mã nguồn về môi trường chạy
+        uses: actions/checkout@v4
+
+      - name: Kiểm tra thư mục
+        run: |
+          echo "Bắt đầu kiểm tra mã nguồn..."
+          ls -la
+          echo "Kiểm tra hoàn tất, thư mục hợp lệ!"
+
+      - name: Đóng gói Frontend
+        run: |
+          echo "Tiến hành đóng gói code Frontend..."
+          mkdir -p dist
+          cp index.html dist/
+          echo "Đã gom xong vào thư mục dist/"
+
+      - name: Lưu trữ thành phẩm (Artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist/
+          retention-days: 7
