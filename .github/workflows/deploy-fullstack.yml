@@ -1,0 +1,44 @@
+name: Triển khai FE (Nginx) & BE (JSON Server) lên Prod
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_docker_compose:
+    name: Cập nhật và Khởi động dịch vụ
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: 1. Tải mã nguồn mới nhất
+        uses: actions/checkout@v4
+
+      - name: 2. Copy toàn bộ dự án lên máy chủ (qua SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_SERVER_IP }}
+          username: ${{ secrets.PROD_SERVER_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          source: "."
+          target: "/opt/landing-page-app"
+          
+      - name: 3. Ra lệnh Docker Compose build và chạy lại (qua SSH)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_SERVER_IP }}
+          username: ${{ secrets.PROD_SERVER_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            echo "Truy cập vào thư mục dự án..."
+            cd /opt/landing-page-app
+            
+            echo "Tắt các container cũ đang chạy..."
+            docker-compose down
+            
+            echo "Tiến hành build lại image mới và khởi động..."
+            docker-compose up -d --build
+            
+            echo "Kiểm tra danh sách container đang hoạt động:"
+            docker ps
