@@ -22,7 +22,7 @@ jobs:
       - name: 3. Thử nghiệm Build Docker Compose
         run: |
           echo "Tiến hành build thử các container để quét lỗi..."
-          docker-compose build
+          docker compose build
           echo "Build thành công! Cấu hình FE và BE hoàn toàn hợp lệ."
 
       - name: 4. Lưu trữ thành phẩm (Artifact)
