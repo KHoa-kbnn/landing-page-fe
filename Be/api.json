@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "services": [
+    {
+      "id": 1,
+      "title": "Dich vu cong chi NSNN",
+      "price": "Nop Ho so Thanh Toan"
+    },
+    {
+      "id": 2,
+      "title": "Dich vu cong CKC",
+      "price": "nop ho so"
+    }
+  ]
+}
