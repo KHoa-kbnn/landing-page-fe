@@ -1,0 +1,21 @@
+stages: [test, build]
+
+kiem_tra_file:
+  stage: test
+  image: alpine:latest
+  script:
+    - echo "Bắt đầu kiểm tra mã nguồn..."
+    - ls -la
+    - echo "Kiểm tra hoàn tất, thư mục hợp lệ!"
+
+dong_goi_thanh_pham:
+  stage: build
+  image: alpine:latest
+  script:
+    - echo "Tiến hành đóng gói code Frontend..."
+    - mkdir -p dist
+    - cp index.html dist/
+    - echo "Đã gom xong vào thư mục dist/"
+  artifacts:
+    paths: [dist/]
+    expire_in: 1 week
