@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        nodejs 'Node20' // Tên này phải gõ chuẩn xác như tên bạn vừa đặt ở Bước 2
+        nodejs 'Node20' 
     }
     options {
         timestamps()
