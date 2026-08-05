@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "scripts": {
     "test": "node --test",
-    "build": "mkdir -p dist && cp -r src dist/ && echo 'built' > dist/build.txt"
+    "build": "mkdir -p dist && cp -r frontend/* dist/ && echo 'built' > dist/build.txt"
   }
 }
