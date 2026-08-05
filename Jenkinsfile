@@ -1,33 +1,31 @@
 pipeline {
     agent any
-    
-    tools {
-        nodejs 'Node20'
-    }
-    
+
     options {
         timestamps()
         timeout(time: 15, unit: 'MINUTES')
     }
+
     environment {
         DEPLOY_DIR = "/var/www/demo-app"
         NODE_ENV   = "production"
     }
+
     stages {
         stage('Build') {
             steps {
                 echo "Đang build trên nhánh ${env.BRANCH_NAME}"
-                sh 'node -v'
-                sh 'npm -v'
                 sh 'npm ci'
                 sh 'npm run build'
             }
         }
+
         stage('Test') {
             steps {
                 sh 'npm test'
             }
         }
+
         stage('Deploy') {
             when {
                 branch 'main'
@@ -41,6 +39,7 @@ pipeline {
             }
         }
     }
+
     post {
         always {
             archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true, fingerprint: true
