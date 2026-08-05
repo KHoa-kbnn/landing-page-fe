@@ -5,8 +5,9 @@ pipeline {
         timestamps()
         timeout(time: 15, unit: 'MINUTES')
     }
-    environment {
-        DEPLOY_DIR = "/var/www/demo-app"
+environment {
+        // Đổi đường dẫn deploy vào thư mục local trong workspace thay vì /var/www
+        DEPLOY_DIR = "${env.WORKSPACE}/dist_output"
         NODE_ENV   = "production"
     }
     stages {
