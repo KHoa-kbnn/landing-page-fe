@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Landing Page - Test API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        input { padding: 8px; width: 250px; }
+        button { padding: 10px 15px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Landing Page của Khoa</h1>
+    
+    <!-- Phần 1: Form điền thông tin (Gửi dữ liệu) -->
+    <h2>Điền thông tin đăng ký</h2>
+    <form id="form-dang-ky">
+        <div class="form-group">
+            <label>Tên của bạn:</label><br>
+            <input type="text" id="ten" required placeholder="Nhập tên..." />
+        </div>
+        <div class="form-group">
+            <label>Email:</label><br>
+            <input type="email" id="email" required placeholder="Nhập email..." />
+        </div>
+        <button type="submit">Gửi thông tin</button>
+    </form>
+
+    <hr>
+
+    <!-- Phần 2: Hiển thị danh sách (Đọc dữ liệu) -->
+    <h2>Danh sách khách hàng đã đăng ký</h2>
+    <ul id="danh-sach"></ul>
+
+    <script>
+        // 1. Hàm load danh sách khách hàng từ Backend
+        function loadDanhSach() {
+            fetch('http://localhost:3000/khachhang')
+                .then(res => res.json())
+                .then(data => {
+                    const ul = document.getElementById('danh-sach');
+                    ul.innerHTML = ''; // Xóa list cũ trước khi cập nhật
+                    data.forEach(kh => {
+                        ul.innerHTML += '<li><strong>' + kh.name + '</strong> - ' + kh.email + '</li>';
+                    });
+                });
+        }
+
+        // Chạy hàm load lần đầu khi mở trang
+        loadDanhSach();
+
+        // 2. Xử lý khi bấm nút "Gửi thông tin"
+        document.getElementById('form-dang-ky').addEventListener('submit', function(e) {
+            e.preventDefault(); // Chặn hành vi load lại trang mặc định của form
+            
+            const tenNguoiDien = document.getElementById('ten').value;
+            const emailNguoiDien = document.getElementById('email').value;
+
+            // Đẩy dữ liệu (POST) lên Backend
+            fetch('http://localhost:3000/khachhang', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: tenNguoiDien,
+                    email: emailNguoiDien
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert('Gửi thông tin thành công!');
+                document.getElementById('form-dang-ky').reset(); // Xóa trắng form
+                loadDanhSach(); // Tự động load lại danh sách bên dưới
+            });
+        });
+    </script>
+</body>
+</html>
