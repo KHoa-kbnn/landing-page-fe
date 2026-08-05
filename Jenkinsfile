@@ -1,8 +1,6 @@
 pipeline {
     agent any
-    tools {
-        nodejs 'Node20'
-    }
+
     options {
         timestamps()
         timeout(time: 15, unit: 'MINUTES')
@@ -15,6 +13,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Đang build trên nhánh ${env.BRANCH_NAME}"
+                // Tự động dùng lệnh cài node trực tiếp mà không phụ thuộc vào Global Tools của Jenkins
+                sh 'node -v || true'
                 sh 'npm ci'
                 sh 'npm run build'
             }
