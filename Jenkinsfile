@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    tools {
+        nodejs 'Node20'
+    }
+    
     options {
         timestamps()
         timeout(time: 15, unit: 'MINUTES')
@@ -13,18 +17,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Đang build trên nhánh ${env.BRANCH_NAME}"
-                
-                // Sử dụng lệnh cài đặt trực tiếp, an toàn cú pháp Groovy
-                sh '''
-                    apt-get update && apt-get install -y curl
-                    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-                    apt-get install -y nodejs
-                    
-                    node -v
-                    npm -v
-                    npm ci
-                    npm run build
-                '''
+                sh 'node -v'
+                sh 'npm -v'
+                sh 'npm ci'
+                sh 'npm run build'
             }
         }
         stage('Test') {
