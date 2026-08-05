@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'Node20' // Tên này phải gõ chuẩn xác như tên bạn vừa đặt ở Bước 2
+    }
     options {
         timestamps()
         timeout(time: 15, unit: 'MINUTES')
