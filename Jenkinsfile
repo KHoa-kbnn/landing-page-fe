@@ -14,17 +14,11 @@ pipeline {
             steps {
                 echo "Đang build trên nhánh ${env.BRANCH_NAME}"
                 
-                // Tự động cài đặt Node.js phiên bản 20 vào môi trường Jenkins nếu chưa có
+                // Sử dụng lệnh cài đặt trực tiếp, an toàn cú pháp Groovy
                 sh '''
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-                    
-                    if ! command -v node &> /dev/null
-                    then
-                        echo "Đang cài đặt Node.js 20..."
-                        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-                        apt-get update && apt-get install -y nodejs
-                    fi
+                    apt-get update && apt-get install -y curl
+                    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+                    apt-get install -y nodejs
                     
                     node -v
                     npm -v
