@@ -5,7 +5,8 @@ pipeline {
         timestamps()
         timeout(time: 15, unit: 'MINUTES')
     }
-    environment {
+environment {
+        // Đổi đường dẫn deploy vào thư mục local trong workspace thay vì /var/www
         DEPLOY_DIR = "${env.WORKSPACE}/dist_output"
         NODE_ENV   = "production"
     }
@@ -14,6 +15,7 @@ pipeline {
             steps {
                 echo "Đang build trên nhánh ${env.BRANCH_NAME}"
                 
+                // Tự động tải và cài đặt Node.js cục bộ vào thư mục workspace (Không cần quyền root)
                 sh '''
                     export NODE_VERSION="20.11.0"
                     export ARCH="x64"
@@ -28,6 +30,7 @@ pipeline {
                         rm node-v${NODE_VERSION}-linux-x64.tar.gz
                     fi
                     
+                    # Đưa Node vào biến môi trường của tiến trình hiện tại
                     export PATH="$WORKSPACE/node_custom/bin:$PATH"
                     
                     node -v
