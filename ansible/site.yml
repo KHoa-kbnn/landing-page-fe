@@ -1,11 +1,14 @@
 - hosts: web1
   become: yes
+  vars:
+    server_name: "landing-page.local"
   tasks:
     - name: Cai goi nginx
       apt:
         name: nginx
         state: present
         update_cache: yes
+    # ... các task phía dưới giữ nguyên
 
     - name: Copy file cau hinh tu template
       template:
