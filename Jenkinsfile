@@ -5,8 +5,7 @@ pipeline {
         timestamps()
         timeout(time: 15, unit: 'MINUTES')
     }
-environment {
-        // Đổi đường dẫn deploy vào thư mục local trong workspace thay vì /var/www
+    environment {
         DEPLOY_DIR = "${env.WORKSPACE}/dist_output"
         NODE_ENV   = "production"
     }
@@ -15,7 +14,6 @@ environment {
             steps {
                 echo "Đang build trên nhánh ${env.BRANCH_NAME}"
                 
-                // Tự động tải và cài đặt Node.js cục bộ vào thư mục workspace (Không cần quyền root)
                 sh '''
                     export NODE_VERSION="20.11.0"
                     export ARCH="x64"
@@ -30,7 +28,6 @@ environment {
                         rm node-v${NODE_VERSION}-linux-x64.tar.gz
                     fi
                     
-                    # Đưa Node vào biến môi trường của tiến trình hiện tại
                     export PATH="$WORKSPACE/node_custom/bin:$PATH"
                     
                     node -v
@@ -54,11 +51,15 @@ environment {
                 branch 'main'
             }
             steps {
-                echo "Deploy sang ${DEPLOY_DIR}"
-                sh '''
-                    mkdir -p "$DEPLOY_DIR"
-                    cp -r dist/* "$DEPLOY_DIR"/
-                '''
+                echo "Deploy sang server smac@192.168.123.101 thông qua Ansible"
+                sshagent(credentials: ['ansible-ssh-key']) {
+                    sh '''
+                        cd ansible
+                        export ANSIBLE_HOST_KEY_CHECKING=false
+                        ansible --version
+                        ansible-playbook -i inventory site.yml --diff
+                    '''
+                }
             }
         }
     }
